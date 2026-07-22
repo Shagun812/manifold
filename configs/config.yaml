@@ -1,0 +1,37 @@
+
+project:
+  name: manifold
+
+seed: 42
+
+inference:
+  device: "auto"
+  dtype: float32
+  cache_dir: null
+  
+model:
+  name: EleutherAI/pythia-160m
+
+transformation:
+  type: symmetric_per_channel
+  bits: 8
+
+methods:
+  logit_lens: true
+  activation_patching: true
+
+input: 
+  prompt_file: data/prompts.txt
+
+artifacts:
+  root: artifacts/
+
+logging: 
+  level: INFO
+  
+generation:
+  max_new_tokens: 50
+  temperature: 1.0
+  do_sample: false
+  top_p: 1.0
+
