@@ -1,0 +1,18 @@
+from manifold.models.loader import load_model
+from manifold.utils.config_loader import load_config
+
+cfg = load_config()
+
+loaded_model = load_model(cfg)
+model = loaded_model["model"]
+
+print(model)
+
+print("=" * 80)
+
+print(model.gpt_neox.layers[0])
+
+print("=" * 80)
+
+for name, module in model.named_modules():
+    print(name)
