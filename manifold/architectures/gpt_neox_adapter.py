@@ -1,4 +1,9 @@
-    
+"""
+Adapter for GPT-Neox based architectures(Pythia).
+
+Provides a stable inference for accessing transformer components required by 
+mechanistic interpretability algorithms.
+"""
     
     class GPTNeoXAdapter:
 
