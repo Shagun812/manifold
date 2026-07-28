@@ -31,6 +31,10 @@ mechanistic interpretability algorithms.
             return [ layer.mlp.dense_4h_to_h for layer in self.layers]
         
         @property
+        def residual_stream(self):
+            return self.layers
+        
+        @property
         def final_layer_norm(self):
             return self.model.gpt_neox.final_layer_norm
         
