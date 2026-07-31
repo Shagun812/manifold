@@ -2,6 +2,8 @@ import typer
 from manifold.inference.generate import generate
 from manifold.models.loader import load_model
 from manifold.utils.config_loader import load_config
+from manifold.experiments.experiment import Experiment
+from manifold.experiments.runner import run_exp
 
 
 app = typer.Typer(help="MI with pytorch hooks")
@@ -18,3 +20,12 @@ def gen_cmd(prompt:str= typer.Option(...,"-p","--prompt", help = "Prompt to gene
 
     result = generate(loaded_model, prompt, cfg)
     typer.echo(result)
+
+@app.command("run_lens")
+def run_lens():
+    cfg = load_config()
+    loaded_model = load_model(cfg)
+    experiment = Experiment(prompt="The capital of France is called", target=" Paris")
+    results = run_exp(loaded_model, experiment)
+
+    typer.echo(results["metrics"])

@@ -3,10 +3,10 @@ import torch
 
 def compute_correct_token_probability(logits: torch.Tensor, target_token_id: int)-> float:
     prob= torch.softmax(logits, dim=-1)
-
-    return prob[target_token_id].item()
+    return prob[0,target_token_id].item()
 
 def compute_top_k_pred(logits: torch.Tensor, tokenizer, k:int):
+    logits = logits.squeeze()
     probs= torch.softmax(logits, dim=-1)
     top_probs, top_ids = torch.topk(probs, k=k)
 
