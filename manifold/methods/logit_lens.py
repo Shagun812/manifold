@@ -11,8 +11,6 @@ def cache_hook(cache: ActivationCache, layer_name: str):
                 output = output[0]
             
             cache.store(layer_name, output)
-            #confirm
-            print(type(output), output.shape)
 
             return output
         

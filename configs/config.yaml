@@ -20,10 +20,6 @@ methods:
   logit_lens: true
   activation_patching: true
 
-experiment:
-  task: induction
-  prompt_file: data/prompts.txt
-
 artifacts:
   root: artifacts/
 
