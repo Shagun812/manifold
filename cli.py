@@ -32,7 +32,7 @@ def run_lens():
 
     experiment = Experiment(prompt="The capital of France is called", target=" Paris")
     
-    results = run_exp(loaded_model, experiment)
+    results = run_exp(loaded_model, experiment, cfg)
     metrics = results["metrics"]
     artifacts_path= results["artifacts_path"]
 
