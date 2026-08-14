@@ -4,3 +4,5 @@ from dataclasses import dataclass
 class Experiment:
     prompt: str
     target: str
+    clean_prompt: str
+    corrupted_prompt: str
