@@ -3,7 +3,7 @@ from manifold.inference.generate import generate
 from manifold.models.loader import load_model
 from manifold.utils.config_loader import load_config
 from manifold.experiments.experiment import Experiment
-from manifold.experiments.runner import run_exp
+from manifold.experiments.runner import run_exp, run_patching_exp
 
 from rich.table import Table
 from rich.console import Console
@@ -62,3 +62,29 @@ def run_lens():
 
         console.print(table)
     console.print(f"artifacts saved:{artifacts_path}")
+
+
+@app.command("patch")
+def patch_cmd():
+    cfg= load_config()
+    loaded_model= load_model(cfg)
+
+    experiment= Experiment(target=" Na",clean_prompt="The chemical symbol for sodium is", corrupted_prompt="The chemical symbol for potassium is",)
+
+    results= run_patching_exp(loaded_model, experiment, cfg)
+
+    recovery_score= results["attention_recovery"]
+
+    console.print(f"[bold]Model:[/bold] {cfg['model']['name']}")
+    console.print(f"[bold]Clean:[/bold] {experiment.clean_prompt}")
+    console.print(f"[bold]Corrupted:[/bold] {experiment.corrupted_prompt}")
+    console.print(f"[bold]Target:[/bold] {experiment.target}")
+
+    table= Table(title="Attention recovery")
+    table.add_column("Layer", justify="center")
+    table.add_column("Recovery", justify="right")
+
+    for layer, result in recovery_score.items():
+        table.add_row(str(layer), f"{result['recovery']:.6f}")
+
+    console.print(table)

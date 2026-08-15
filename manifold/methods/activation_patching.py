@@ -2,6 +2,7 @@ from manifold.hooks.manager import HookManager
 from manifold.hooks.cache import ActivationCache
 from manifold.hooks.patch import replace_hook
 from manifold.architectures.gpt_neox_adapter import GPTNeoXAdapter
+from manifold.analysis.metrics import compute_patch_recovery
 import torch
 
 
@@ -41,7 +42,7 @@ def get_logits(model, inputs):
     with torch.inference_mode():
         outputs=model(**inputs)
 
-    return outputs.logits[:,-1,:]
+    return outputs.logits[0,-1,:]
 
 
 def run_single_patch(model, corrupted_inputs, module, clean_cache, activation_name):
@@ -57,22 +58,8 @@ def run_single_patch(model, corrupted_inputs, module, clean_cache, activation_na
     finally:
         hook_manager.remove()
 
-    return outputs.logits[:,-1,:]
+    return outputs.logits[0,-1,:]
 
-
-def compute_patch_recovery(clean_logits, corrupted_logits, patched_logits, target_token_id):
-
-    clean_logit=clean_logits[target_token_id]
-    corrupted_logit=corrupted_logits[target_token_id]
-    patched_logit=patched_logits[target_token_id]
-
-    denominator= clean_logit-corrupted_logit
-
-    if torch.abs(denominator) < 1e-8:
-        return 0.0
-    recovery=(patched_logit-corrupted_logit)/ denominator
-
-    return recovery.item()
 
 
 def patch_attention(loaded_model, experiment):
@@ -108,7 +95,7 @@ def patch_attention(loaded_model, experiment):
 
         patched_logits= run_single_patch(model=model, corrupted_inputs=tokenized_corrupted_inputs, module=module, clean_cache=clean_cache, activation_name= activation_name)
 
-        recovery= compute_patch_recovery(clean_logits.squeeze(0), corrupted_logits.squeeze(0), patched_logits.squeeze(0), target_token_id)
+        recovery= compute_patch_recovery(clean_logits, corrupted_logits, patched_logits, target_token_id)
 
         results[layer_idx]={"recovery": recovery}
     

@@ -2,7 +2,8 @@ from dataclasses import dataclass
 
 @dataclass(slots=True)
 class Experiment:
-    prompt: str
-    target: str
-    clean_prompt: str
-    corrupted_prompt: str
+    prompt: str | None=None
+    target: str | None=None
+    clean_prompt: str | None=None
+    corrupted_prompt: str | None=None
+    

@@ -41,3 +41,18 @@ def compute_metrics(logit_lens_res: dict, loaded_model:dict, experiment,k:int=3)
         "correct_token_probability": correct_token_probs,
         "top_k_predictions": top_k_preds
     }
+
+
+def compute_patch_recovery(clean_logits, corrupted_logits, patched_logits, target_token_id):
+
+    clean_logit=clean_logits[target_token_id]
+    corrupted_logit=corrupted_logits[target_token_id]
+    patched_logit=patched_logits[target_token_id]
+
+    denominator= clean_logit-corrupted_logit
+
+    if torch.abs(denominator) < 1e-8:
+        return 0.0
+    recovery=(patched_logit-corrupted_logit)/ denominator
+
+    return recovery.item()
