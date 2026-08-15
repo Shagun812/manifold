@@ -1,6 +1,6 @@
 from manifold.methods.logit_lens import run_logit_lens
 from manifold.analysis.metrics import compute_metrics
-from manifold.tracking.writer import save_logit_lens
+from manifold.tracking.writer import save_logit_lens, save_activation_patching
 from manifold.methods.activation_patching import run_activation_patching
 
 def run_exp(loaded_model, experiment, cfg):
@@ -23,8 +23,14 @@ def run_patching_exp(loaded_model, experiment, cfg):
 
     if not cfg["methods"]["activation_patching"]:
         raise ValueError("Activation patching is disabled in the configuration")
+    else:
+        activation_patching_res= run_activation_patching(loaded_model, experiment)
+        model_name=loaded_model["name"]
 
-    return run_activation_patching(loaded_model, experiment)
+        saved_file=save_activation_patching(experiment, model_name, activation_patching_res)
+
+
+    return {"results": activation_patching_res, "artifact_path": saved_file}
 
         
         

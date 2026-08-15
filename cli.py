@@ -73,7 +73,9 @@ def patch_cmd():
 
     results= run_patching_exp(loaded_model, experiment, cfg)
 
-    recovery_score= results["attention_recovery"]
+    artifacts_path= results["artifact_path"]
+
+    recovery_score= results["results"]["attention_recovery"]
 
     console.print(f"[bold]Model:[/bold] {cfg['model']['name']}")
     console.print(f"[bold]Clean:[/bold] {experiment.clean_prompt}")
@@ -86,5 +88,7 @@ def patch_cmd():
 
     for layer, result in recovery_score.items():
         table.add_row(str(layer), f"{result['recovery']:.6f}")
+
+    console.print(f"artifacts saved:{artifacts_path}")
 
     console.print(table)

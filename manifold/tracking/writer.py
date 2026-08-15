@@ -32,3 +32,27 @@ def save_logit_lens(experiment,model_name:str, metrics)-> dict:
         json.dump(metrics, f, indent=4, ensure_ascii=False)
     
     return {"experiment": filepath1, "metrics": filename2}
+
+def save_activation_patching(experiment, model_name:str, results:dict):
+    cfg = load_config()
+    artifact_root=Path(cfg["artifacts"]["root"])
+    activation_patching_dir= artifact_root/"activation_patching"
+
+    if not activation_patching_dir.exists():
+        activation_patching_dir.mkdir(parents=True, exist_ok=True)
+
+    artifact = {
+        "model": model_name,
+        **asdict(experiment),
+        "metrics": {
+            "attention_recovery": results["attention_recovery"]
+        },
+    }
+
+    timestamp=datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+    filepath=activation_patching_dir / f"patching_{timestamp}.json"
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(artifact,f,indent=4,ensure_ascii=False)
+
+    return filepath
